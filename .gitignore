@@ -1,0 +1,15 @@
+.idea
+/public/images
+/public/video
+/public/rest.ts
+###> symfony/framework-bundle ###
+/.env.local
+/.env.local.php
+/.env.*.local
+/config/secrets/prod/prod.decrypt.private.php
+/public/bundles/
+/var/
+/vendor/
+###< symfony/framework-bundle ###
+/assets/*.mp3
+MadelineProto.log
