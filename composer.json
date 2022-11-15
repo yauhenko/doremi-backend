@@ -29,6 +29,7 @@
         "symfony/runtime": "6.1.*",
         "symfony/security-bundle": "6.1.*",
         "symfony/serializer": "6.1.*",
+        "symfony/translation": "6.1.*",
         "symfony/yaml": "6.1.*",
         "yabx/rest-bundle": "^0.1",
         "yabx/ts-bundle": "^0.1",

@@ -6,42 +6,40 @@ use App\Utils\Env;
 use DateTimeInterface;
 use DateTimeImmutable;
 use App\Utils\DBAL\Options;
-use Doctrine\ORM\Mapping\Id;
-use Doctrine\ORM\Mapping\Entity;
-use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UploadRepository;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-#[Entity(repositoryClass: UploadRepository::class)]
+#[ORM\Entity(repositoryClass: UploadRepository::class)]
 class Upload {
 
-    #[Id]
-    #[Column(length: 32, options: [Options::FIXED => true])]
+    #[ORM\Id]
+    #[ORM\Column(length: 32, options: [Options::FIXED => true])]
     #[Groups(['main'])]
     private string $id;
 
-    #[Column(length: 255)]
+    #[ORM\Column(length: 255)]
     private string $path;
 
-    #[Column(length: 255)]
+    #[ORM\Column(length: 255)]
     #[Groups(['upload:name', 'upload:full'])]
     private string $name;
 
-    #[Column(length: 50)]
+    #[ORM\Column(length: 50)]
     #[Groups(['upload:mime', 'upload:full'])]
     private string $mime;
 
-    #[Column]
+    #[ORM\Column]
     #[Groups(['upload:size', 'upload:full'])]
     private int $size;
 
-    #[Column]
+    #[ORM\Column]
     private DateTimeImmutable $createdAt;
 
-    #[Column]
+    #[ORM\Column]
     private DateTimeImmutable $touchedAt;
 
-    #[Column]
+    #[ORM\Column]
     private bool $isLocked;
 
     public function __construct(string $id, string $path, string $name, string $mime, int $size, bool $isLocked = false) {

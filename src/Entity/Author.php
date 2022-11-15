@@ -2,53 +2,29 @@
 
 namespace App\Entity;
 
-use Doctrine\ORM\Mapping\Id;
-use Doctrine\ORM\Mapping\Entity;
-use Doctrine\ORM\Mapping\Column;
-use Doctrine\ORM\Mapping\ManyToOne;
+use Doctrine\ORM\Mapping as ORM;
 use App\Repository\AuthorRepository;
-use Doctrine\ORM\Mapping\JoinColumn;
-use Doctrine\ORM\Mapping\GeneratedValue;
+use Symfony\Component\Serializer\Annotation\Groups;
 
-#[Entity(repositoryClass: AuthorRepository::class)]
+#[ORM\Entity(repositoryClass: AuthorRepository::class)]
 class Author {
 
-    #[Id]
-    #[GeneratedValue]
-    #[Column]
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
     private int $id;
 
-    #[ManyToOne]
-    #[JoinColumn(nullable: false)]
-    private User $user;
-
-    #[Column(length: 100)]
+    #[ORM\Column(length: 100)]
+    #[Groups(['main'])]
     private string $name = '';
+
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['author:user', 'author:full'])]
+    private User $user;
 
     public function __construct(User $user) {
         $this->user = $user;
-    }
-
-    public function getId(): int {
-        return $this->id;
-    }
-
-    public function getUser(): User {
-        return $this->user;
-    }
-
-    public function setUser(User $user): self {
-        $this->user = $user;
-        return $this;
-    }
-
-    public function getName(): string {
-        return $this->name;
-    }
-
-    public function setName(string $name): self {
-        $this->name = $name;
-        return $this;
     }
 
 }

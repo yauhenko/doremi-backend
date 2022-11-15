@@ -3,40 +3,38 @@
 namespace App\Entity;
 
 use DateTimeImmutable;
-use Doctrine\ORM\Mapping\Id;
-use Doctrine\ORM\Mapping\Column;
-use Doctrine\ORM\Mapping\Entity;
+use App\Enum\UserRole;
+use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
-use Doctrine\ORM\Mapping\GeneratedValue;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
-#[Entity(repositoryClass: UserRepository::class)]
+#[ORM\Entity(repositoryClass: UserRepository::class)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface {
 
-    #[Id]
-    #[GeneratedValue]
-    #[Column]
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
     #[Groups(['main'])]
     private int $id;
 
-    #[Column(length: 180, unique: true)]
+    #[ORM\Column(length: 180, unique: true)]
     #[Groups(['main'])]
     private string $email;
 
-    #[Column]
-    private array $roles = [];
+    #[ORM\Column(length: 20, enumType: UserRole::class)]
+    private UserRole $role;
 
-    #[Column]
-    private string $password;
+    #[ORM\Column]
+    private string $password = 'not-set';
 
-    #[Column]
+    #[ORM\Column]
     private DateTimeImmutable $createdAt;
 
-    public function __construct(string $email, string $password) {
+    public function __construct(string $email, UserRole $role) {
         $this->email = $email;
-        $this->password = $password;
+        $this->role = $role;
         $this->createdAt = new DateTimeImmutable();
     }
 
@@ -58,14 +56,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface {
     }
 
     public function getRoles(): array {
-        $roles = $this->roles;
-        $roles[] = 'ROLE_USER';
-        return array_unique($roles);
-    }
-
-    public function setRoles(array $roles): self {
-        $this->roles = $roles;
-        return $this;
+       return $this->role->getRoles();
     }
 
     public function getPassword(): string {
@@ -79,6 +70,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface {
 
     public function eraseCredentials() {
         // nothing to do
+    }
+
+    public function getRole(): UserRole {
+        return $this->role;
     }
 
 }

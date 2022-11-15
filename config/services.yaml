@@ -26,3 +26,7 @@ services:
     Yabx\WebToken\TokenManager:
         arguments:
             $secret: '%env(AUTH_SECRET)%'
+
+    App\EventListener\PdoInitializerListener:
+        tags:
+            - { name: doctrine.event_listener, event: postConnect }
