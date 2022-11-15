@@ -12,4 +12,5 @@ return [
     Yabx\RestBundle\RestBundle::class => ['all' => true],
     Yabx\TypeScriptBundle\TypeScriptBundle::class => ['all' => true],
     Symfony\Bundle\SecurityBundle\SecurityBundle::class => ['all' => true],
+    Yauhenko\CronBundle\CronBundle::class => ['all' => true],
 ];
