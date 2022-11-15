@@ -32,15 +32,15 @@ class Uploads extends Base {
     #[Route('/upload/base64', methods: ['POST'])]
     public function uploadJson(Request $request, Uploader $uploader): JsonResponse {
         $this->denyAccessUnlessGranted('ROLE_USER');
-        $result = $uploader->upload($request, ['ip' => $this->getClientIp()]);
+        $result = $uploader->upload($request);
         return $this->result($result, 200, $request->get('extra') ? ['upload:full'] : []);
     }
 
     #[Method('Загрузить с FormData', request: "FormData", response: Upload::class)]
     #[Route('/upload/form', methods: ['POST'])]
     public function uploadForm(Request $request, Uploader $uploader): JsonResponse {
-        //$this->denyAccessUnlessGranted('ROLE_USER');
-        $result = $uploader->upload($request, ['ip' => $this->getClientIp()]);
+//        $this->denyAccessUnlessGranted('ROLE_USER');
+        $result = $uploader->upload($request);
         return $this->result($result, 200, $request->get('extra') ? ['upload:full'] : []);
     }
 
@@ -70,9 +70,7 @@ class Uploads extends Base {
             $file = new File("/tmp/{$id}");
             $status->setUpload($uploader->save($file, [
                 'name' => $status->getFileName(),
-                'resize' => $status->getRequest()->resize,
                 'lock' => $status->getRequest()->lock,
-                'extra' => $status->getRequest()->extra,
             ]));
             $redis->del("upload:{$id}");
         }

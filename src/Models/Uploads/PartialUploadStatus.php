@@ -4,6 +4,7 @@ namespace App\Models\Uploads;
 
 use App\Entity\Upload;
 use App\Utils\Password;
+use App\Service\Uploader;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 class PartialUploadStatus {
@@ -30,7 +31,7 @@ class PartialUploadStatus {
     protected InitPartialUploadRequest $request;
 
     public function __construct(InitPartialUploadRequest $request) {
-        $this->id = Password::fromChars(32, Password::CHARS_LETTERS_LC);
+        $this->id = Uploader::id();
         $this->fileName = $request->fileName;
         $this->fileType = $request->fileType ?: 'application/octet-stream';
         $this->fileSize = $request->fileSize;

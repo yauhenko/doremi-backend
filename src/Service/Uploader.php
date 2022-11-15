@@ -28,13 +28,15 @@ class Uploader {
         $this->params = $params;
     }
 
-    public function upload(Request $request, array $info = []): ?Upload {
+    public static function id(): string {
+        return Password::fromChars(32, Password::CHARS_DIGITS . Password::CHARS_LETTERS_LC);
+    }
+
+    public function upload(Request $request): ?Upload {
         if($file = $request->files->get('upload')) {
             return $this->save($file, [
                 'name' => $file->getClientOriginalName(),
-                'resize' => (int)$request->get('resize') ?: null,
                 'lock' => (bool)$request->get('lock'),
-                'ip' => $info['ip'] ?? 'unknown'
             ]);
         } elseif($upload = $request->get('upload')) {
             $upload['data'] = explode(',', $upload['data'], 2)[1];
@@ -46,9 +48,7 @@ class Uploader {
             $file = new File($tmp);
             return $this->save($file, [
                 'name' => $upload['name'],
-                'resize' => (int)$request->get('resize') ?: null,
                 'lock' => (bool)$request->get('lock'),
-                'ip' => $info['ip'] ?? 'unknown'
             ]);
         } else {
             return null;
@@ -60,8 +60,8 @@ class Uploader {
         $id = $options['id'] ?? null;
         $name = $options['name'] ?? null;
 
-        $id = $id ?: Password::fromChars(32, Password::CHARS_LETTERS_LC);
-        $prefix = date('Ym');
+        $id = $id ?: Uploader::id();
+        $prefix = date('Y/m/d');
         $name = $name ?: $file->getFilename();
         $ext = pathinfo($name, PATHINFO_EXTENSION);
 
@@ -75,15 +75,6 @@ class Uploader {
 
         $size = $movedFile->getSize() ?: 0;
         $mime = $movedFile->getMimeType() ?: 'application/octet-stream';
-
-        if(preg_match('/^image/', $mime)) {
-            $im = new Imagick($movedFile->getPathname());
-            if($options['resize'] && ($im->getImageWidth() > $options['resize'] || $im->getImageHeight() > $options['resize'])) {
-                $im->resizeImage($options['resize'], $options['resize'], Imagick::FILTER_LANCZOS, 0.5, true);
-                $im->writeImage();
-                $size = filesize($movedFile->getPathname());
-            }
-        }
 
         $upload = new Upload($id, '/uploads/' . $prefix . '/' . $fileName, $name, $mime, $size, (bool)$options['lock']);
         $this->em->persist($upload);
